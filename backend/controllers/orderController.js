@@ -7,6 +7,11 @@ const placeOrder = async (req, res) => {
     try {
         const { userId, items, amount, address} = req.body
 
+        // Input validation
+        if (!userId || !items || !amount || !address) {
+            return res.status(400).json({ success: false, message: 'Missing required fields' })
+        }
+
         const orderData = {
             userId,
             items,
@@ -22,10 +27,10 @@ const placeOrder = async (req, res) => {
 
         await userModel.findByIdAndUpdate(userId, { cartData: {} })
 
-        res.json({ success: true, message: 'Pesanan Diterima' })
+        res.status(201).json({ success: true, message: 'Pesanan Diterima' })
     } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
+        console.error('Error in placeOrder:', error)
+        res.status(500).json({ success: false, message: 'Internal Server Error' })
     }
 }
 
@@ -33,6 +38,12 @@ const placeOrder = async (req, res) => {
 const placeOrderMidtrans = async (req, res) => {
     try {
         const { userId, items, amount, address } = req.body
+
+        // Input validation
+        if (!userId || !items || !amount || !address) {
+            return res.status(400).json({ success: false, message: 'Missing required fields' })
+        }
+
         const origin = req.headers.origin || `${req.protocol}://${req.get('host')}`
         
         const orderData = {
@@ -64,10 +75,10 @@ const placeOrderMidtrans = async (req, res) => {
         }
 
         const transaction = await Midtrans.createTransaction(parameter)
-        res.json({ success: true, session_url: transaction.redirect_url })
+        res.status(201).json({ success: true, session_url: transaction.redirect_url })
     } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
+        console.error('Error in placeOrderMidtrans:', error)
+        res.status(500).json({ success: false, message: 'Internal Server Error' })
     }
 }
 

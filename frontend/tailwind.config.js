@@ -7,15 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#c1e8ef36",
-        secondary: "#43c2d1",
-        tertiary: "#272626",
+        primary: "#c1e8ef36", // Biru muda transparan
+        secondary: "#43c2d1", // Biru cerah
+        tertiary: "#272626", // Abu gelap mendekati hitam
         gray: {
-          10: "#EEEEEE",
-          20: "#A2A2A2",
-          30: "#7B7B7B",
-          50: "#585858",
-          90: "#141414",
+          10: "#EEEEEE", // Abu sangat terang
+          20: "#A2A2A2", // Abu terang
+          30: "#7B7B7B", // Abu medium
+          50: "#585858", // Abu gelap
+          90: "#141414", // Hampir hitam
         },
       },
       screens: {

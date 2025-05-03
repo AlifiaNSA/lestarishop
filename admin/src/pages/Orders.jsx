@@ -101,7 +101,7 @@ const Orders = ({ token }) => {
               <p>Payment: {order.payment ? "Done" : "Pending"}</p>
               <p>Date: {new Date(order.date).toLocaleDateString()}</p>
             </div>
-            <p className='text-sm font-semibold'>{formatRupiah(order.amount)}</p>
+            <p className='text-sm font-semibold'>{formatRupiah(order.amount)} 000</p>
             <p className='text-sm font-semibold'><span className='text-tertiary'>User: </span>{order.userAccount ? order.userAccount.username : 'Unknown'}</p>
             <select onChange={(e) => statusHandler(e, order._id)} value={order.status} className='text-xs font-semibold p-1 ring-1 ring-slate-900/5 rounded max-w-36 bg-primary'>
               <option value="Pesanan Diterima">Pesanan Diterima</option>

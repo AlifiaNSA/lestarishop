@@ -59,7 +59,7 @@ const Orders = ({token}) => {
   if(index === order.items.length - 1) {
     return <p key={index}>
       {item.name} x {item.quantity} <span>"
-      {item.size}"</span> - Stock: {item.stock ?? 'N/A'}
+      {item.size}"</span>
     </p>
   } else {
     return <p key={index}>

@@ -1,11 +1,12 @@
 import Midtrans from '../config/midtrans.js'
 import orderModel from '../models/orderModel.js'
 import userModel from '../models/userModel.js'
+import productModel from '../models/productModel.js'
 
-// Contorller function for Placing order using COD method
+
 const placeOrder = async (req, res) => {
     try {
-        const { userId, items, amount, address} = req.body
+        const { userId, items, amount, address } = req.body
 
         // Input validation
         if (!userId || !items || !amount || !address) {
@@ -24,6 +25,15 @@ const placeOrder = async (req, res) => {
 
         const newOrder = new orderModel(orderData)
         await newOrder.save()
+
+        // Update stock for each item
+        for (const item of items) {
+            const product = await productModel.findById(item._id);
+            if (product) {
+                product.stock = Math.max(0, product.stock - item.quantity);
+                await product.save();
+            }
+        }
 
         await userModel.findByIdAndUpdate(userId, { cartData: {} })
 
@@ -45,7 +55,7 @@ const placeOrderMidtrans = async (req, res) => {
         }
 
         const origin = req.headers.origin || `${req.protocol}://${req.get('host')}`
-        
+
         const orderData = {
             userId,
             items,
@@ -86,19 +96,17 @@ const placeOrderMidtrans = async (req, res) => {
 const verifyMidtrans = async (req, res) => {
     const { orderId, success, userId } = req.body
     try {
-       if (success === 'true') {
-           await orderModel.findByIdAndUpdate(orderId, { payment: true})
-           await userModel.findByIdAndUpdate(userId, { cartData: {} })
-           res.json({ success: true, message: 'Payment Verified' })
-       }
+        if (success === 'true') {
+            await orderModel.findByIdAndUpdate(orderId, { payment: true })
+            await userModel.findByIdAndUpdate(userId, { cartData: {} })
+            res.json({ success: true, message: 'Payment Verified' })
+        }
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
     }
 }
 
-
-// Controller function for getting all orders data for Admin panel
 const allOrders = async (req, res) => {
     try {
         const orders = await orderModel.find({})
@@ -121,6 +129,7 @@ const userOrders = async (req, res) => {
     }
 }
 
+
 // Controller function for updating order status for Admin panel
 const updateStatus = async (req, res) => {
     try {
@@ -133,11 +142,11 @@ const updateStatus = async (req, res) => {
     }
 }
 
-export { 
-    placeOrder, 
+export default {
+    placeOrder,
     placeOrderMidtrans,
-    allOrders, 
-    userOrders, 
-    updateStatus, 
-    verifyMidtrans 
+    allOrders,
+    userOrders,
+    updateStatus,
+    verifyMidtrans
 }

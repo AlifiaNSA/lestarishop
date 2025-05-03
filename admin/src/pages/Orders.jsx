@@ -12,6 +12,11 @@ const Orders = ({ token }) => {
   const [totalSales, setTotalSales] = useState(0)
   const [totalOrders, setTotalOrders] = useState(0)
 
+  // Utility function to format number as Rupiah currency string
+  const formatRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number)
+  }
+
   const fetchAllOrders = async () => {
     if (!token) {
       return null
@@ -54,7 +59,7 @@ const Orders = ({ token }) => {
     <div className='px-2 sm:px-8 mt-4 sm:mt-14'>
       <div className='mb-6 p-4 bg-white rounded-lg shadow'>
         <h2 className='text-xl font-semibold mb-2'>Sales Report</h2>
-        <p className='text-lg'>Total Sales: Rp{totalSales}.000</p>
+        <p className='text-lg'>Total Sales: {formatRupiah(totalSales)}</p>
         <p className='text-lg'>Total Orders: {totalOrders}</p>
       </div>
       <div className='flex flex-col gap-4'>
@@ -96,7 +101,7 @@ const Orders = ({ token }) => {
               <p>Payment: {order.payment ? "Done" : "Pending"}</p>
               <p>Date: {new Date(order.date).toLocaleDateString()}</p>
             </div>
-            <p className='text-sm font-semibold'>Rp{order.amount}.000</p>
+            <p className='text-sm font-semibold'>{formatRupiah(order.amount)}</p>
             <select onChange={(e) => statusHandler(e, order._id)} value={order.status} className='text-xs font-semibold p-1 ring-1 ring-slate-900/5 rounded max-w-36 bg-primary'>
               <option value="Pesanan Diterima">Pesanan Diterima</option>
               <option value="Pengemasan">Pengemasan</option>
@@ -111,4 +116,3 @@ const Orders = ({ token }) => {
   )
 }
 
-export default Orders

@@ -21,7 +21,7 @@ const Orders = () => {
       );
       if (response.data.success) {
         // Sort orders by date ascending (earliest first)
-        const sortedOrders = response.data.orders.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const sortedOrders = response.data.orders.sort((a, b) => new Date(b.date) - new Date(a.date));
         setOrders(sortedOrders);
       }
     } catch (error) {

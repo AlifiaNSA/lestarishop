@@ -4,7 +4,7 @@ import productModel from '../models/productModel.js'
 // Cotroller function for adding a product
 const addProduct = async(req, res) => {
     try {
-const {name, description, price, category, subCategory, sizes, popular} = req.body
+const {name, description, price, category, subCategory, sizes, popular, stock} = req.body
 
 
         // Extracting images if provided
@@ -40,6 +40,7 @@ const {name, description, price, category, subCategory, sizes, popular} = req.bo
             popular: popular === 'true' ? true : false,
             sizes: sizes ? JSON.parse(sizes) : [], // Default to empty array if sizes not provided
             image: imagesUrl,
+            stock: stock ? Number(stock) : 0,
             date: Date.now()
         }
 

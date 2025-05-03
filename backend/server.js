@@ -17,7 +17,10 @@ connectCloudinary()
 
 // Middleware
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: 'https://lestarishop.vercel.app',
+  optionsSuccessStatus: 200
+}))
 
 // Api endpoint
 app.use('/api/user', userRouter)

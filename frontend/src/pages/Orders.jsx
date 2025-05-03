@@ -29,6 +29,7 @@ const Orders = () => {
       );
       if (response.data.success) {
         const ordersData = response.data.orders.reverse();
+        console.log("Fetched ordersData:", ordersData);
 
         // Aggregate orders into one combined order
         if (ordersData.length > 0) {
@@ -69,6 +70,7 @@ const Orders = () => {
             status: latestStatus,
           };
 
+          console.log("Combined order:", combinedOrder);
           setOrders([combinedOrder]);
         } else {
           setOrders([]);

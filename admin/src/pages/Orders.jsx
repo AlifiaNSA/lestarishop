@@ -9,6 +9,8 @@ import { TfiPackage } from 'react-icons/tfi'
 const Orders = ({ token }) => {
 
   const [orders, setOrders] = useState([])
+  const [totalSales, setTotalSales] = useState(0)
+  const [totalOrders, setTotalOrders] = useState(0)
 
   const fetchAllOrders = async () => {
     if (!token) {
@@ -17,7 +19,12 @@ const Orders = ({ token }) => {
     try {
       const response = await axios.post(backend_url + '/api/order/list', {}, { headers: { token } })
       if (response.data.success) {
-        setOrders(response.data.orders.reverse())
+        const ordersData = response.data.orders.reverse()
+        setOrders(ordersData)
+        // Calculate total sales and total orders
+        const sales = ordersData.reduce((acc, order) => acc + order.amount, 0)
+        setTotalSales(sales)
+        setTotalOrders(ordersData.length)
       } else {
         toast.error(response.data.message)
       }
@@ -45,6 +52,11 @@ const Orders = ({ token }) => {
 
   return (
     <div className='px-2 sm:px-8 mt-4 sm:mt-14'>
+      <div className='mb-6 p-4 bg-white rounded-lg shadow'>
+        <h2 className='text-xl font-semibold mb-2'>Sales Report</h2>
+        <p className='text-lg'>Total Sales: Rp{totalSales}.000</p>
+        <p className='text-lg'>Total Orders: {totalOrders}</p>
+      </div>
       <div className='flex flex-col gap-4'>
         {orders.map((order) => (
           <div key={order._id} className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_0.5fr_1fr] gap-4 items-start p-3 text-gray-700 bg-white rounded-lg'>

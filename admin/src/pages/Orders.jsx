@@ -35,7 +35,7 @@ const Orders = ({token}) => {
       }
     } catch (error) {
       console.error(error)
-      toast.error(response.data.message)
+      toast.error(error.message)
     }
   }
 
@@ -55,19 +55,19 @@ const Orders = ({token}) => {
               <div className='flex items-start gap-1'>
                 <div className='medium-14'>Items:</div>
                 <div className='flex flex-col relative top-0.5'>
-                  {order.items.map((item, index) => {
-                    if(index === order.items.length - 1) {
-                      return <p key={index}>
-                        {item.name} x {item.quantity} <span>"
-                        {item.size}"</span>
-                      </p>
-                    } else {
-                      return <p key={index}>
-                        {item.name} x {item.quantity} <span>"
-                        {item.size}"</span> ,
-                      </p>
-                    }
-                  })}
+{order.items.map((item, index) => {
+  if(index === order.items.length - 1) {
+    return <p key={index}>
+      {item.name} x {item.quantity} <span>"
+      {item.size}"</span> - Stock: {item.stock ?? 'N/A'}
+    </p>
+  } else {
+    return <p key={index}>
+      {item.name} x {item.quantity} <span>"
+      {item.size}"</span> - Stock: {item.stock ?? 'N/A'} ,
+    </p>
+  }
+})}
                 </div>
               </div>
               <p className='medium-14'><span className='text-tertiary'>Name: </span>

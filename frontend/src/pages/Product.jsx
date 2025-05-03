@@ -77,6 +77,7 @@ const Product = () => {
             </div>
             <h4 className="h4 my-2">Rp{product.price}.000</h4>
             <p className="max-w-[555px]">{product.description}</p>
+            <p className="medium-14 font-semibold">Stock: {product.stock ?? 'N/A'}</p>
             <div className="flex flex-col gap-4 my-4 mb-5">
               <div className="flex gap-2">
                 {[...product.sizes]

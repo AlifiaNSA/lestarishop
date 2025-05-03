@@ -64,7 +64,7 @@ const Orders = ({ token }) => {
       </div>
       <div className='flex flex-col gap-4'>
         {orders.map((order) => (
-          <div key={order._id} className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_0.5fr_1fr] gap-4 items-start p-3 text-gray-700 bg-white rounded-lg'>
+          <div key={order._id} className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_0.5fr_1fr_1fr] gap-4 items-start p-3 text-gray-700 bg-white rounded-lg'>
             <div className='flexCenter'>
               <TfiPackage className='text-3xl text-secondary' />
             </div>
@@ -102,6 +102,7 @@ const Orders = ({ token }) => {
               <p>Date: {new Date(order.date).toLocaleDateString()}</p>
             </div>
             <p className='text-sm font-semibold'>{formatRupiah(order.amount)}</p>
+            <p className='text-sm font-semibold'><span className='text-tertiary'>User: </span>{order.userAccount ? order.userAccount.username : 'Unknown'}</p>
             <select onChange={(e) => statusHandler(e, order._id)} value={order.status} className='text-xs font-semibold p-1 ring-1 ring-slate-900/5 rounded max-w-36 bg-primary'>
               <option value="Pesanan Diterima">Pesanan Diterima</option>
               <option value="Pengemasan">Pengemasan</option>

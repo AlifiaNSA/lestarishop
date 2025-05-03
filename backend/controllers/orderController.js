@@ -102,7 +102,15 @@ export const verifyMidtrans = async (req, res) => {
 export const allOrders = async (req, res) => {
     try {
         const orders = await orderModel.find({})
-        res.json({ success: true, orders })
+        // Fetch user info for each order
+        const ordersWithUser = await Promise.all(orders.map(async (order) => {
+            const user = await userModel.findById(order.userId).select('username email')
+            return {
+                ...order._doc,
+                userAccount: user ? { username: user.username, email: user.email } : null
+            }
+        }))
+        res.json({ success: true, orders: ordersWithUser })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })

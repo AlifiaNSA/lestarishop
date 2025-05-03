@@ -3,7 +3,7 @@ import orderModel from '../models/orderModel.js'
 import userModel from '../models/userModel.js'
 
 // Contorller function for Placing order using COD method
-const placeOrder = async (req, res) => {
+export const placeOrder = async (req, res) => {
     try {
         const { userId, items, amount, address} = req.body
 
@@ -35,7 +35,7 @@ const placeOrder = async (req, res) => {
 }
 
 // Controller function for Placing order using Midtrans
-const placeOrderMidtrans = async (req, res) => {
+export const placeOrderMidtrans = async (req, res) => {
     try {
         const { userId, items, amount, address } = req.body
 
@@ -83,7 +83,7 @@ const placeOrderMidtrans = async (req, res) => {
 }
 
 // Controller function for verifying Midtrans payment
-const verifyMidtrans = async (req, res) => {
+export const verifyMidtrans = async (req, res) => {
     const { orderId, success, userId } = req.body
     try {
        if (success === 'true') {
@@ -99,7 +99,7 @@ const verifyMidtrans = async (req, res) => {
 
 
 // Controller function for getting all orders data for Admin panel
-const allOrders = async (req, res) => {
+export const allOrders = async (req, res) => {
     try {
         const orders = await orderModel.find({})
         res.json({ success: true, orders })
@@ -110,7 +110,7 @@ const allOrders = async (req, res) => {
 }
 
 // Controller function for getting user orders for frontend
-const userOrders = async (req, res) => {
+export const userOrders = async (req, res) => {
     try {
         const { userId } = req.body
         const orders = await orderModel.find({ userId })
@@ -122,7 +122,7 @@ const userOrders = async (req, res) => {
 }
 
 // Controller function for updating order status for Admin panel
-const updateStatus = async (req, res) => {
+export const updateStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body
         await orderModel.findByIdAndUpdate(orderId, { status })
@@ -131,13 +131,4 @@ const updateStatus = async (req, res) => {
         console.log(error)
         res.json({ success: false, message: error.message })
     }
-}
-
-export default { 
-    placeOrder, 
-    placeOrderMidtrans,
-    allOrders, 
-    userOrders, 
-    updateStatus, 
-    verifyMidtrans 
 }

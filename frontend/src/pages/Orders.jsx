@@ -51,7 +51,7 @@ const Orders = () => {
                     <div>
                       <div className="flex items-center gap-x-2">
                         <h5 className="medium-14">Total Payment:</h5>
-                        <p className='text-sm font-semibold'>
+                        <p>
                           {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
                             transaction.items && transaction.items.length > 0
                               ? transaction.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)

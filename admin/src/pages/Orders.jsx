@@ -87,7 +87,7 @@ const Orders = ({ token }) => {
                   })}
                 </div>
               </div>
-              <p className='medium-14'><span className='text-tertiary'>Name: </span>
+              <p className='medium-14'><span className='text-tertiary'>Nama Penerima: </span>
                 {order.userAccount ? order.userAccount.username : order.address.firstName + " " + order.address.lastName}</p>
               <p className='medium-14'><span className='text-tertiary'>Address: </span>
                 <span>{order.address.street + ", "}</span>

@@ -1,6 +1,8 @@
 import Midtrans from '../config/midtrans.js'
 import orderModel from '../models/orderModel.js'
 import userModel from '../models/userModel.js'
+import productModel from '../models/productModel.js'
+
 
 // Contorller function for Placing order using COD method
 const placeOrder = async (req, res) => {

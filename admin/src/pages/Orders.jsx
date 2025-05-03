@@ -6,17 +6,17 @@ import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { TfiPackage } from 'react-icons/tfi'
 
-const Orders = ({token}) => {
+const Orders = ({ token }) => {
 
   const [orders, setOrders] = useState([])
 
   const fetchAllOrders = async () => {
-    if(!token) {
+    if (!token) {
       return null
     }
     try {
-      const response = await axios.post(backend_url + '/api/order/list', {}, {headers: {token}})
-      if(response.data.success) {
+      const response = await axios.post(backend_url + '/api/order/list', {}, { headers: { token } })
+      if (response.data.success) {
         setOrders(response.data.orders.reverse())
       } else {
         toast.error(response.data.message)
@@ -29,8 +29,8 @@ const Orders = ({token}) => {
 
   const statusHandler = async (e, orderId) => {
     try {
-      const response = await axios.post(backend_url + '/api/order/status', {orderId, status: e.target.value}, {headers: {token}})
-      if(response.data.success) {
+      const response = await axios.post(backend_url + '/api/order/status', { orderId, status: e.target.value }, { headers: { token } })
+      if (response.data.success) {
         await fetchAllOrders()
       }
     } catch (error) {
@@ -49,31 +49,31 @@ const Orders = ({token}) => {
         {orders.map((order) => (
           <div key={order._id} className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_0.5fr_1fr] gap-4 items-start p-3 text-gray-700 bg-white rounded-lg'>
             <div className='flexCenter'>
-              <TfiPackage className='text-3xl text-secondary'/>
+              <TfiPackage className='text-3xl text-secondary' />
             </div>
             <div>
               <div className='flex items-start gap-1'>
                 <div className='medium-14'>Items:</div>
                 <div className='flex flex-col relative top-0.5'>
-{order.items.map((item, index) => {
-  if(index === order.items.length - 1) {
-    return <p key={index}>
-      {item.name} x {item.quantity} <span>"
-      {item.size}"</span>
-    </p>
-  } else {
-    return <p key={index}>
-      {item.name} x {item.quantity} <span>"
-      {item.size}"</span>
-    </p>
-  }
-})}
+                  {order.items.map((item, index) => {
+                    if (index === order.items.length - 1) {
+                      return <p key={index}>
+                        {item.name} x {item.quantity} <span>"
+                          {item.size}"</span>
+                      </p>
+                    } else {
+                      return <p key={index}>
+                        {item.name} x {item.quantity} <span>"
+                          {item.size}"</span>
+                      </p>
+                    }
+                  })}
                 </div>
               </div>
               <p className='medium-14'><span className='text-tertiary'>Name: </span>
-              {order.address.firstName + " " + order.address.lastName}</p>
+                {order.address.firstName + " " + order.address.lastName}</p>
               <p className='medium-14'><span className='text-tertiary'>Address: </span>
-                <span>{order.address.street + ", " }</span>
+                <span>{order.address.street + ", "}</span>
                 <span>{order.address.city + ", " + order.address.state + ", " + order.address.country + ", " + order.address.zipcode}</span>
               </p>
               <p>{order.address.phone}</p>

@@ -1,8 +1,6 @@
 import Midtrans from '../config/midtrans.js'
 import orderModel from '../models/orderModel.js'
 import userModel from '../models/userModel.js'
-import productModel from '../models/productModel.js'
-
 
 // Contorller function for Placing order using COD method
 const placeOrder = async (req, res) => {
@@ -26,15 +24,6 @@ const placeOrder = async (req, res) => {
 
         const newOrder = new orderModel(orderData)
         await newOrder.save()
-
-        // Update stock for each item
-        for (const item of items) {
-            const product = await productModel.findById(item._id);
-            if (product) {
-                product.stock = Math.max(0, product.stock - item.quantity);
-                await product.save();
-            }
-        }
 
         await userModel.findByIdAndUpdate(userId, { cartData: {} })
 
@@ -124,8 +113,7 @@ const allOrders = async (req, res) => {
 const userOrders = async (req, res) => {
     try {
         const { userId } = req.body
-        // Populate user details (e.g., username or name) in the orders response
-        const orders = await orderModel.find({ userId }).populate('userId', 'username name')
+        const orders = await orderModel.find({ userId })
         res.json({ success: true, orders })
     } catch (error) {
         console.log(error)

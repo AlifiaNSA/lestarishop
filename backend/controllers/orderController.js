@@ -124,7 +124,8 @@ const allOrders = async (req, res) => {
 const userOrders = async (req, res) => {
     try {
         const { userId } = req.body
-        const orders = await orderModel.find({ userId })
+        // Populate user details (e.g., username or name) in the orders response
+        const orders = await orderModel.find({ userId }).populate('userId', 'username name')
         res.json({ success: true, orders })
     } catch (error) {
         console.log(error)

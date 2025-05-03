@@ -71,6 +71,12 @@ const Orders = () => {
                   ))}
                 </div>
               </div>
+              {order.userId && order.userId.username && (
+                <p className="medium-14">
+                  <span className="text-tertiary">User Account: </span>
+                  {order.userId.username}
+                </p>
+              )}
               {order.address && (
                 <>
                   <p className="medium-14">

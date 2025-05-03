@@ -7,7 +7,8 @@ import {
     updateStatus, 
     userOrders, 
     //verifyStripe,
-    verifyMidtrans 
+    verifyMidtrans,
+    getOrderById
 } from '../controllers/orderController.js'
 import adminAuth from '../middleware/adminAuth.js'
 import authUser from '../middleware/auth.js'
@@ -29,5 +30,8 @@ orderRouter.post('/verifyMidtrans',authUser, verifyMidtrans)
 
 // For User
 orderRouter.post('/userorders', authUser, userOrders)
+
+// For printing order details
+orderRouter.get('/print/:orderId', authUser, getOrderById)
 
 export default orderRouter

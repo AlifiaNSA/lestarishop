@@ -30,6 +30,67 @@ const Orders = () => {
     }
   };
 
+  const handlePrintOrder = async (orderId) => {
+    try {
+      if (!token) {
+        toast.error("User not authenticated");
+        return;
+      }
+      const response = await axios.get(`${backendUrl}/api/order/print/${orderId}`, {
+        headers: { token }
+      });
+      if (response.data.success) {
+        const order = response.data.order;
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          const itemsHtml = order.items.map(item => `
+            <div>
+              <h4>${item.name}</h4>
+              <p>Price: Rp${item.price}.000</p>
+              <p>Quantity: ${item.quantity}</p>
+              <p>Size: ${item.size}</p>
+            </div>
+            <hr/>
+          `).join('');
+          printWindow.document.write(`
+            <html>
+              <head>
+                <title>Print Order</title>
+              </head>
+              <body>
+                <h2>Order ID: ${order._id}</h2>
+                <p>Date: ${new Date(order.date).toDateString()}</p>
+                <p>Payment Method: ${order.paymentMethod}</p>
+                <p>Status: ${order.status || 'N/A'}</p>
+                <h3>Items:</h3>
+                ${itemsHtml}
+                <h3>Total Payment: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
+                  order.items && order.items.length > 0
+                    ? order.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)
+                    : 0
+                )}</h3>
+                <script>
+                  window.onload = function() {
+                    window.print();
+                    window.onafterprint = function() { window.close(); }
+                  }
+                </script>
+              </body>
+            </html>
+          `);
+          printWindow.document.close();
+        } else {
+          toast.error("Unable to open print window");
+        }
+      } else {
+        toast.error("Failed to fetch order details for printing");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error occurred while printing order");
+    }
+  };
+
   useEffect(() => {
     loadOrderData();
   }, [token]);
@@ -78,6 +139,12 @@ const Orders = () => {
                     >
                       Track Order
                     </button>
+                    <button
+                      onClick={() => handlePrintOrder(transaction._id)}
+                      className="btn-primary !p-1.5 !py-1 !text-xs ml-2"
+                    >
+                      Print Order
+                    </button>
                   </div>
                   {transaction.items.map((item, idx) => (
                     <div
@@ -125,5 +192,6 @@ const Orders = () => {
     </div>
   );
 };
+
 
 export default Orders;

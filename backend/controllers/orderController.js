@@ -140,3 +140,18 @@ export const updateStatus = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
+
+// Controller function to get order details by ID for printing
+export const getOrderById = async (req, res) => {
+    try {
+        const { orderId } = req.params
+        const order = await orderModel.findById(orderId)
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' })
+        }
+        res.json({ success: true, order })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, message: error.message })
+    }
+}

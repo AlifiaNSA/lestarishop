@@ -88,7 +88,7 @@ const Orders = ({ token }) => {
                 </div>
               </div>
               <p className='medium-14'><span className='text-tertiary'>Name: </span>
-                {order.address.firstName + " " + order.address.lastName}</p>
+                {order.userAccount ? order.userAccount.username : order.address.firstName + " " + order.address.lastName}</p>
               <p className='medium-14'><span className='text-tertiary'>Address: </span>
                 <span>{order.address.street + ", "}</span>
                 <span>{order.address.city + ", " + order.address.state + ", " + order.address.country + ", " + order.address.zipcode}</span>

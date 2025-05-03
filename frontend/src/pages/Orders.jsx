@@ -20,7 +20,9 @@ const Orders = () => {
         { headers: { token } }
       );
       if (response.data.success) {
-        setOrders(response.data.orders);
+        // Sort orders by date descending
+        const sortedOrders = response.data.orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setOrders(sortedOrders);
       }
     } catch (error) {
       console.log(error);

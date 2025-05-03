@@ -47,6 +47,16 @@ const Orders = () => {
             <div className="text-gray-700 flex flex-col gap-8">
               {orders.map((transaction, index) => (
                 <div key={index} className="border-b pb-6">
+                  <div className="mb-2">
+                    <h5 className="medium-14">Total Payment:</h5>
+                    <p className='text-sm font-semibold'>
+                      {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
+                        transaction.items && transaction.items.length > 0
+                          ? transaction.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)
+                          : 0
+                      )}
+                    </p>
+                  </div>
                   <div className="flexBetween flex-wrap mb-4">
                     <div>
                       <div className="flex items-center gap-x-2">

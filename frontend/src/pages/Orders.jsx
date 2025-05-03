@@ -1,110 +1,112 @@
 import React, { useContext, useEffect, useState } from "react";
-import Title from "../components/Title";
 import { ShopContext } from "../context/ShopContext";
-import Footer from "../components/Footer";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { TfiPackage } from "react-icons/tfi";
 
 const Orders = () => {
   const { backendUrl, token } = useContext(ShopContext);
-  const [ordersGrouped, setOrdersGrouped] = useState([]);
+  const [orders, setOrders] = useState([]);
 
-  const loadOrderData = async () => {
+  // Utility function to format number as Rupiah currency string
+  const formatRupiah = (number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(number);
+  };
+
+  const fetchUserOrders = async () => {
+    if (!token) {
+      return null;
+    }
     try {
-      if (!token) {
-        return null;
-      }
       const response = await axios.post(
         backendUrl + "/api/order/userorders",
         {},
         { headers: { token } }
       );
       if (response.data.success) {
-        // Group orders by order id or date (assuming each order has an _id)
-        const groupedOrders = response.data.orders.map((order) => {
-          return {
-            id: order._id,
-            status: order.status,
-            payment: order.payment,
-            paymentMethod: order.paymentMethod,
-            date: order.date,
-            items: order.items,
-          };
-        });
-        // Reverse to show latest orders first
-        setOrdersGrouped(groupedOrders.reverse());
+        const ordersData = response.data.orders.reverse();
+        setOrders(ordersData);
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error(error.message);
     }
   };
 
+  const statusHandler = async () => {
+    // Optional: Implement status update if backend supports it for user orders
+    // For now, just show a toast or ignore
+    toast.info("Status update not available on frontend.");
+  };
+
   useEffect(() => {
-    loadOrderData();
+    fetchUserOrders();
   }, [token]);
 
   return (
-    <div>
-      <div className="bg-primary mb-16">
-        {/* Container */}
-        <div className="max-padd-container py-10">
-          <Title title1={"Order"} title2={" List"} />
-          {/* Container */}
-          {ordersGrouped.map((order) => (
-            <div key={order.id} className="bg-white p-4 mt-3 rounded-lg">
-              <div className="mb-4 flex justify-between items-center">
-                <div>
-                  <p className="font-semibold">Order Date: {new Date(order.date).toDateString()}</p>
-                  <p>Status: {order.status}</p>
-                  <p>Payment Method: {order.paymentMethod}</p>
-                </div>
-                <button onClick={loadOrderData} className="btn-secondary !p-1.5 !py-1 !text-xs">
-                  Track Order
-                </button>
-              </div>
-              <div className="flex flex-col gap-4">
-                {order.items.map((item, i) => (
-                  <div key={i} className="flex gap-x-3 w-full">
-                    {/* Image */}
-                    <div className="flex gap-6">
-                      <img
-                        src={item.image[0]}
-                        alt="orderImg"
-                        className="sm:w-[77px] rounded-lg"
-                      />
-                    </div>
-                    {/* order item info */}
-                    <div className="block w-full">
-                      <h5 className="h5 capitalize line-clamp-1">{item.name}</h5>
-                      <div className="flexBetween flex-wrap">
-                        <div>
-                          <div className="flex items-center gap-x-2 sm:gap-x-3">
-                            <div className="flexCenter gap-x-2">
-                              <h5 className="medium-14">Price:</h5>
-                              <p>Rp{item.price}.000</p>
-                            </div>
-                            <div className="flexCenter gap-x-2">
-                              <h5 className="medium-14">Quantity:</h5>
-                              <p>{item.quantity}</p>
-                            </div>
-                            <div className="flexCenter gap-x-2">
-                              <h5 className="medium-14">Size:</h5>
-                              <p>{item.size}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+    <div className="px-2 sm:px-8 mt-4 sm:mt-14">
+      <div className="flex flex-col gap-4">
+        {orders.map((order) => (
+          <div
+            key={order._id}
+            className="grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_0.5fr_1fr] gap-4 items-start p-3 text-gray-700 bg-white rounded-lg"
+          >
+            <div className="flexCenter">
+              <TfiPackage className="text-3xl text-secondary" />
             </div>
-          ))}
-        </div>
+            <div>
+              <div className="flex items-start gap-1">
+                <div className="medium-14">Items:</div>
+                <div className="flex flex-col relative top-0.5">
+                  {order.items.map((item, index) => (
+                    <p key={index}>
+                      {item.name} x {item.quantity} <span>"{item.size}"</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+              {order.address && (
+                <>
+                  <p className="medium-14">
+                    <span className="text-tertiary">Name: </span>
+                    {order.address.firstName} {order.address.lastName}
+                  </p>
+                  <p className="medium-14">
+                    <span className="text-tertiary">Address: </span>
+                    {order.address.street}, {order.address.city}, {order.address.state}, {order.address.country}, {order.address.zipcode}
+                  </p>
+                  <p>{order.address.phone}</p>
+                </>
+              )}
+            </div>
+            <div>
+              <p className="text-sm">Total Items: {order.items.length}</p>
+              <p className="mt-3">Method: {order.paymentMethod}</p>
+              <p>Payment: {order.payment ? "Done" : "Pending"}</p>
+              <p>Date: {new Date(order.date).toLocaleDateString()}</p>
+            </div>
+            <p className="text-sm font-semibold">{formatRupiah(order.amount)}</p>
+            <select
+              onChange={(e) => statusHandler(e, order._id)}
+              value={order.status}
+              className="text-xs font-semibold p-1 ring-1 ring-slate-900/5 rounded max-w-36 bg-primary"
+              disabled
+            >
+              <option value="Pesanan Diterima">Pesanan Diterima</option>
+              <option value="Pengemasan">Pengemasan</option>
+              <option value="Dikirim">Dikirim</option>
+              <option value="Dalam Pengiriman">Dalam Pengiriman</option>
+              <option value="Terkirim">Terkirim</option>
+            </select>
+          </div>
+        ))}
       </div>
-
-      <Footer />
     </div>
   );
 };

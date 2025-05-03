@@ -142,6 +142,7 @@ const Orders = () => {
                     <button
                       onClick={() => handlePrintOrder(transaction._id)}
                       className="btn-primary !p-1.5 !py-1 !text-xs ml-2"
+                      style={{ backgroundColor: 'blue', color: 'white', display: 'inline-block' }}
                     >
                       Print Order
                     </button>

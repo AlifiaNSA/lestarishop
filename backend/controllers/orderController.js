@@ -25,6 +25,15 @@ const placeOrder = async (req, res) => {
         const newOrder = new orderModel(orderData)
         await newOrder.save()
 
+        // Update stock for each item
+        for (const item of items) {
+            const product = await productModel.findById(item._id);
+            if (product) {
+                product.stock = Math.max(0, product.stock - item.quantity);
+                await product.save();
+            }
+        }
+
         await userModel.findByIdAndUpdate(userId, { cartData: {} })
 
         res.status(201).json({ success: true, message: 'Pesanan Diterima' })

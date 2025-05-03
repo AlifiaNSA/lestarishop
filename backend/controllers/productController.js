@@ -90,4 +90,23 @@ const listProduct = async(req, res) => {
     }
 }
 
-export {addProduct, removeProduct, singleProduct, listProduct}
+const updateStock = async (req, res) => {
+    try {
+        const { id, stock } = req.body;
+        if (!id || stock === undefined) {
+            return res.status(400).json({ success: false, message: 'Product id and stock are required' });
+        }
+        const product = await productModel.findById(id);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        product.stock = stock;
+        await product.save();
+        res.json({ success: true, message: 'Stock updated successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export {addProduct, removeProduct, singleProduct, listProduct, updateStock}

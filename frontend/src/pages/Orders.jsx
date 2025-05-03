@@ -50,7 +50,7 @@ const Orders = () => {
                   <div className="flexBetween flex-wrap mb-4">
                     <div>
                       <div className="flex items-center gap-x-2">
-                      <h5 style={{ fontWeight: 'bold', fontSize: '14px' }}>Total Payment Test:</h5>
+                        <h5 className="medium-14">Total Payment:</h5>
                         <p className='text-sm font-semibold'>
                           {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
                             transaction.items && transaction.items.length > 0

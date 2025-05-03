@@ -65,7 +65,9 @@ const Orders = () => {
                         <h5 className="medium-14">Total Payment:</h5>
                         <p className='text-sm font-semibold'>
                           {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
-                            transaction.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)
+                            transaction.items && transaction.items.length > 0
+                              ? transaction.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)
+                              : 0
                           )}
                         </p>
                       </div>

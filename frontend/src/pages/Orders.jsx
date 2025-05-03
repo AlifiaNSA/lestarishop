@@ -50,16 +50,6 @@ const Orders = () => {
                   <div className="flexBetween flex-wrap mb-4">
                     <div>
                       <div className="flex items-center gap-x-2">
-                        <h5 className="medium-14">Total Payment:</h5>
-                        <p>
-                          {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
-                            transaction.items && transaction.items.length > 0
-                              ? transaction.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)
-                              : 0
-                          )}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-x-2">
                         <h5 className="medium-14">Date:</h5>
                         <p>{transaction.date ? new Date(transaction.date).toDateString() : ""}</p>
                       </div>

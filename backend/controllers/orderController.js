@@ -101,13 +101,15 @@ export const verifyMidtrans = async (req, res) => {
 // Controller function for getting all orders data for Admin panel
 export const allOrders = async (req, res) => {
     try {
-        const orders = await orderModel.find({})
+        // Find orders with valid userId only
+        const orders = await orderModel.find({ userId: { $ne: null } })
         // Fetch user info for each order
         const ordersWithUser = await Promise.all(orders.map(async (order) => {
-            const user = await userModel.findById(order.userId).select('username email')
+            const user = await userModel.findById(order.userId).select('username name email')
             return {
                 ...order._doc,
-                userAccount: user ? { username: user.username, email: user.email } : null
+                userAccount: user ? { username: user.username, name: user.name, email: user.email } : null,
+                address: order.address || {}
             }
         }))
         res.json({ success: true, orders: ordersWithUser })

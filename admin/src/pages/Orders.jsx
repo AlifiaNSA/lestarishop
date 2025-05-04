@@ -12,9 +12,10 @@ const Orders = ({ token }) => {
   const [totalSales, setTotalSales] = useState(0)
   const [totalOrders, setTotalOrders] = useState(0)
 
-  // Utility function to format number as Rupiah currency string
+  // Utility function to format number as Rupiah currency string with ".000" decimal
   const formatRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number)
+    // Format the number without decimals, then append ".000" to represent thousands
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number) + '.000'
   }
 
   const fetchAllOrders = async () => {
@@ -88,7 +89,7 @@ const Orders = ({ token }) => {
                 </div>
               </div>
               <p className='medium-14'><span className='text-tertiary'>Nama Penerima: </span>
-                {order.userAccount ? order.userAccount.username : order.address.firstName + " " + order.address.lastName}</p>
+                {order.address.firstName + " " + order.address.lastName}</p>
               <p className='medium-14'><span className='text-tertiary'>Address: </span>
                 <span>{order.address.street + ", "}</span>
                 <span>{order.address.city + ", " + order.address.state + ", " + order.address.country + ", " + order.address.zipcode}</span>
@@ -101,8 +102,8 @@ const Orders = ({ token }) => {
               <p>Payment: {order.payment ? "Done" : "Pending"}</p>
               <p>Date: {new Date(order.date).toLocaleDateString()}</p>
             </div>
-            <p className='text-sm font-semibold'>{formatRupiah(order.amount)} 000</p>
-            <p className='text-sm font-semibold'><span className='text-tertiary'>User: </span>{order.userAccount ? order.userAccount.username : 'Unknown'}</p>
+            <p className='text-sm font-semibold'>{formatRupiah(order.amount)}</p>
+            <p className='text-sm font-semibold'><span className='text-tertiary'>User: </span>{order.userAccount && order.userAccount.username ? order.userAccount.username : (order.userAccount && order.userAccount.name ? order.userAccount.name : 'Unknown')}</p>
             <select onChange={(e) => statusHandler(e, order._id)} value={order.status} className='text-xs font-semibold p-1 ring-1 ring-slate-900/5 rounded max-w-36 bg-primary'>
               <option value="Pesanan Diterima">Pesanan Diterima</option>
               <option value="Pengemasan">Pengemasan</option>

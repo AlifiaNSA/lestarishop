@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 
 const PlaceOrder = () => {
 
-    const { navigate, token, cartItems, setCartItems, getCartAmount, delivery_charges, products, backendUrl } = useContext(ShopContext)
+    const { navigate, token, cartItems, setCartItems, getCartAmount, delivery_charges, products, backendUrl, getProductsData } = useContext(ShopContext)
     const [method, setMethod] = useState('cod')
 
     const [formData, setFormData] = useState({
@@ -59,6 +59,7 @@ const PlaceOrder = () => {
                     console.log(response)
                     if (response.data.success) {
                         setCartItems({})
+                        await getProductsData()
                         navigate('/orders')
                     } else {
                         toast.error(response.data.message)
@@ -68,7 +69,7 @@ const PlaceOrder = () => {
 
                 case 'transfer': {
                     try {
-                        const responseMidtrans = await axios.post(backendUrl + '/api/order/midtrans', orderData, { headers: { token } })
+                        const responseMidtrans = await axios.post(backendUrl)
                         if (responseMidtrans.data.success) {
                             window.location.href = responseMidtrans.data.session_url
                         } else {

@@ -52,32 +52,87 @@ const Orders = () => {
             </div>
             <hr/>
           `).join('');
-          printWindow.document.write(`
+            printWindow.document.write(`
             <html>
               <head>
-                <title>Print Order</title>
+              <title>Print Order</title>
+              <style>
+                body {
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                margin: 0;
+                padding: 0;
+                }
+                .receipt {
+                width: 280px;
+                padding: 10px;
+                margin: auto;
+                }
+                .header, .footer {
+                text-align: center;
+                margin-bottom: 10px;
+                }
+                .header h2, .footer p {
+                margin: 0;
+                }
+                .details, .items, .total {
+                margin-bottom: 10px;
+                }
+                .details p, .items p, .total p {
+                margin: 5px 0;
+                }
+                .items .item {
+                border-bottom: 1px dashed #000;
+                padding-bottom: 5px;
+                margin-bottom: 5px;
+                }
+                .total {
+                font-weight: bold;
+                }
+              </style>
               </head>
               <body>
-                <h2>Order ID: ${order._id}</h2>
-                <p>Date: ${new Date(order.date).toDateString()}</p>
+              <div class="receipt">
+                <div class="header">
+                <h2>Order Receipt</h2>
+                <p>Order ID: ${order._id}</p>
+                <p>${new Date(order.date).toDateString()}</p>
+                </div>
+                <div class="details">
                 <p>Payment Method: ${order.paymentMethod}</p>
                 <p>Status: ${order.status || 'N/A'}</p>
+                </div>
+                <div class="items">
                 <h3>Items:</h3>
-                ${itemsHtml}
-                <h3>Total Payment: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
+                ${order.items.map(item => `
+                  <div class="item">
+                  <p>${item.name}</p>
+                  <p>Price: Rp${item.price}.000</p>
+                  <p>Quantity: ${item.quantity}</p>
+                  <p>Size: ${item.size}</p>
+                  </div>
+                `).join('')}
+                </div>
+                <div class="total">
+                <p>Total Payment: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
                   order.items && order.items.length > 0
-                    ? order.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)
-                    : 0
-                )}</h3>
-                <script>
-                  window.onload = function() {
-                    window.print();
-                    window.onafterprint = function() { window.close(); }
-                  }
-                </script>
+                  ? order.items.reduce((total, item) => total + item.price * item.quantity * 1000, 0)
+                  : 0
+                )}</p>
+                </div>
+                <div class="footer">
+                <p>Thank you for your purchase!</p>
+                </div>
+              </div>
+              <script>
+                window.onload = function() {
+                window.print();
+                window.onafterprint = function() { window.close(); }
+                }
+              </script>
               </body>
             </html>
-          `);
+            `);
           printWindow.document.close();
         } else {
           toast.error("Unable to open print window");
@@ -141,8 +196,7 @@ const Orders = () => {
                     </button>
                     <button
                       onClick={() => handlePrintOrder(transaction._id)}
-                      className="btn-primary !p-1.5 !py-1 !text-xs ml-2"
-                      style={{ backgroundColor: 'blue', color: 'white', display: 'inline-block' }}
+                      className="btn-secondary !p-1.5 !py-1 !text-xs ml-2"
                     >
                       Print Order
                     </button>
@@ -193,6 +247,5 @@ const Orders = () => {
     </div>
   );
 };
-
 
 export default Orders;

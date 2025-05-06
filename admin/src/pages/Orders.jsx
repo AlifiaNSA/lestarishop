@@ -5,6 +5,45 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { TfiPackage } from 'react-icons/tfi'
+import * as XLSX from 'xlsx'
+
+const printOrders = (orders, formatRupiah) => {
+  if (orders.length === 0) {
+    alert('No orders to export')
+    return
+  }
+  // Prepare data for Excel export
+  const data = orders.map(order => {
+    const items = order.items.map(item => `${item.name} x${item.quantity} (${item.size})`).join(', ')
+    const recipient = order.address.firstName + ' ' + order.address.lastName
+    const address = `${order.address.street}, ${order.address.city}, ${order.address.state}, ${order.address.country}, ${order.address.zipcode}`
+    const phone = order.address.phone
+    const totalItems = order.items.length
+    const paymentMethod = order.paymentMethod
+    const paymentStatus = order.payment ? 'Done' : 'Pending'
+    const date = new Date(order.date).toLocaleDateString()
+    const user = order.userAccount && order.userAccount.username ? order.userAccount.username : (order.userAccount && order.userAccount.name ? order.userAccount.name : 'Unknown')
+    const status = order.status
+    const amount = formatRupiah(order.amount)
+    return {
+      'Order ID': order._id,
+      'Items': items,
+      'Recipient': recipient,
+      'Address': address,
+      'Phone': phone,
+      'Total Items': totalItems,
+      'Payment Method': paymentMethod,
+      'Date': date,
+      'User': user,
+      'Amount (IDR)': amount
+    }
+  })
+
+  const worksheet = XLSX.utils.json_to_sheet(data)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders')
+  XLSX.writeFile(workbook, 'orders_report.xlsx')
+}
 
 const Orders = ({ token }) => {
 
@@ -59,9 +98,15 @@ const Orders = ({ token }) => {
   return (
     <div className='px-2 sm:px-8 mt-4 sm:mt-14'>
       <div className='mb-6 p-4 bg-white rounded-lg shadow'>
-        <h2 className='text-xl font-semibold mb-2'>Sales Report</h2>
-        <p className='text-lg'>Total Sales: {formatRupiah(totalSales)}</p>
-        <p className='text-lg'>Total Orders: {totalOrders}</p>
+        <h2 className='text-xl font-semibold mb-2'>Laporan Penjualan</h2>
+        <p className='text-lg'>Pemasukan: {formatRupiah(totalSales)}</p>
+      <p className='text-lg'>Total Orders: {totalOrders}</p>
+      <button
+        onClick={() => printOrders(orders, formatRupiah)}
+        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+      >
+        Cetak XLSX
+      </button>
       </div>
       <div className='flex flex-col gap-4'>
         {orders.map((order) => (

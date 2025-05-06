@@ -83,13 +83,29 @@ export const placeOrderMidtrans = async (req, res) => {
 }
 
 // Controller function for verifying Midtrans payment
+import productModel from '../models/productModel.js'
+
 export const verifyMidtrans = async (req, res) => {
     const { orderId, success, userId } = req.body
     try {
        if (success === 'true') {
            await orderModel.findByIdAndUpdate(orderId, { payment: true})
+
+           // Fetch the order to get items
+           const order = await orderModel.findById(orderId)
+           if (order && order.items && order.items.length > 0) {
+           for (const item of order.items) {
+               const product = await productModel.findById(item._id)
+               if (product) {
+                   // Decrement stock by item quantity
+                   product.stock = Math.max(0, product.stock - item.quantity)
+                   await product.save()
+               }
+           }
+           }
+
            await userModel.findByIdAndUpdate(userId, { cartData: {} })
-           res.json({ success: true, message: 'Payment Verified' })
+           res.json({ success: true, message: 'Payment Verified and stock updated' })
        }
     } catch (error) {
         console.log(error)

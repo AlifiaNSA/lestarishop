@@ -69,7 +69,7 @@ const PlaceOrder = () => {
 
                 case 'transfer': {
                     try {
-                        const responseMidtrans = await axios.post(backendUrl)
+                        const responseMidtrans = await axios.post(backendUrl + '/api/order/midtrans', orderData, { headers: { token } })
                         if (responseMidtrans.data.success) {
                             window.location.href = responseMidtrans.data.session_url
                         } else {

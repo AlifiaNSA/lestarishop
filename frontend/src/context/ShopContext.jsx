@@ -15,6 +15,7 @@ const ShopContextProvider = (props) => {
     const [showSearch, setShowSearch] = useState(true)
     const [token, setToken] = useState('')
     const [cartItems, setCartItems] = useState([])
+    const [userName, setUserName] = useState('')
 
     //Adding item to cart
     const addToCart = async(itemId, size) => {
@@ -128,10 +129,30 @@ const ShopContextProvider = (props) => {
         }
     }
 
+    // Get user profile
+    const getUserProfile = async (token) => {
+        try {
+            const { jwtDecode } = await import("jwt-decode");
+            const decoded = jwtDecode(token);
+            const userId = decoded.id
+            const response = await axios.post(backendUrl + '/api/user/profile', { userId })
+            if(response.data.success){
+                setUserName(response.data.user.name)
+            } else {
+                toast.error(response.data.message)
+            }
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
+
     useEffect(() => {
         if (!token && localStorage.getItem('token')) {
-            setToken(localStorage.getItem('token'))
-            getUserCart(localStorage.getItem('token'))
+            const storedToken = localStorage.getItem('token')
+            setToken(storedToken)
+            getUserCart(storedToken)
+            getUserProfile(storedToken)
         }
         getProductsData()
     }, [])
@@ -139,7 +160,8 @@ const ShopContextProvider = (props) => {
     const value = {currency, delivery_charges, navigate, 
     products, token, setToken, search, setSearch, showSearch, 
     setShowSearch, addToCart, getCartCount, cartItems, 
-    setCartItems, updateQuantity, getCartAmount, backendUrl, getProductsData}
+    setCartItems, updateQuantity, getCartAmount, backendUrl, getProductsData,
+    userName}
 
     return (
         <ShopContext.Provider value={value}>

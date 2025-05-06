@@ -8,7 +8,7 @@ import { ShopContext } from '../context/ShopContext'
 
 const Header = () => {
 
-  const { token, setToken, getCartCount, navigate } = useContext(ShopContext)
+  const { token, setToken, getCartCount, navigate, userName } = useContext(ShopContext)
   const [menuOpened, setMenuOpened] = useState(false)
 
   const toggleMenu = () => setMenuOpened((prev) => !prev)
@@ -31,7 +31,7 @@ const Header = () => {
 
         {/* Navbar */}
         <div className='flex-1'>
-          <Navbar containerStyles={`${menuOpened ?
+          <Navbar containerStyles={`${menuOpened ? 
             "flex flex-col gap-y-4 fixed top-16 right-6 p-4 bg-white rounded-lg shadow-lg w-60 ring-1 ring-slate-900/5 z-50 transition-all duration-300 ease-in-out"
             : "hidden xl:flex gap-x-5 xl:gap-x-20 ring-1 ring-slate-900/5 rounded-full p-1 "}`} />
         </div>
@@ -51,10 +51,12 @@ const Header = () => {
           </Link>
           {/* user profile */}
           <div className='group relative'>
-            <div>
+            <div className='flex items-center gap-x-2'>
               {token ? (
-                <div><TbUserCircle className='text-[29px]
-                  cursor-pointer'/></div>
+                <>
+                  <TbUserCircle className='text-[29px] cursor-pointer'/>
+                  <span className='regular-14'>{userName}</span>
+                </>
               ) : (
                 <button onClick={() => navigate('/login')} className='btn-light flexCenter
                   gap-x-2'>Login<RiUserLine className='text-xl' /></button>)}
